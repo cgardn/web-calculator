@@ -1,30 +1,9 @@
 "use strict";
 
-const Display = {
-    
-    updateDisplay,
-    
-    update: () => {
-        let displayContent = '';
-        if (firstNum) displayContent += firstNum;
-        if (operator) displayContent += ` ${operator} `;
-        if (secondNum) displayContent += secondNum;
-        display.textContent = displayContent;
-    },
-
-    clear: () => {
-        displayContent = '';
-        display.textContent = '';
-    }
-}
-
-//  design intent: the only place data is stores is numbers[], operators[], and 
-//    lastResult
+//  design intent: the only place data is stores is numbers[] and lastResult
 //      all operations actually happen on the data, display functions only read
 
 let numbers = [''];
-let operators = [];
-let workingNumber = '';
 let lastResult = 0;
 
 const display = document.querySelector('#calc-display');
@@ -36,32 +15,30 @@ const Actions = {
 
 function add(ind) {
     let thisOp = numbers.slice(ind-1,ind+2);
-    numbers.splice( ind-1, 3, thisOp[0] + thisOp[1] );
+    numbers.splice( ind-1, 3, Number(thisOp[0]) + Number(thisOp[2]) );
 }
 
 function subtract(ind) {
     let thisOp = numbers.slice(ind-1, ind+2);
-    numbers.splice( ind-1, 3, thisOp[0] - thisOp[1]);
+    numbers.splice( ind-1, 3, Number(thisOp[0]) - Number(thisOp[2]));
 }
 
 function multiply(ind) {
     let thisOp = numbers.slice(ind-1, ind+2);
-    numbers.splice( ind-1, 3, thisOp[0] * thisOp[1]);
+    numbers.splice( ind-1, 3, Number(thisOp[0]) * Number(thisOp[2]));
 }
 
 function divide(ind) {
-    let thisOp = numbers.slice(ind-1, ind-2);
+    let thisOp = numbers.slice(ind-1, ind+2);
     if (thisOp[1] == 0) {
         updateDisplay("No dividing by 0!");
         return;
     }
-    numbers.splice( ind-1, 3, thisOp[0] / thisOp[1]);
+    numbers.splice( ind-1, 3, Number(thisOp[0]) / Number(thisOp[2]));
 }
 
 function operate() {
     // manages the whole expression loop and operator precedence
-    // can probably do this recursively instead of a while loop
-    //throw Error("FIXME - operate not implemented");
 
     const nums = '0123456789.';
 
@@ -80,6 +57,8 @@ function operate() {
             else if (numbers[ind] == '-') multiply(ind);
         }
     }
+    // could track length of numbers here, if it doesnt change on next iteration
+    //   then something went wrong (the operators arent doing anything)
     if (numbers.length > 1) {operate();}
 
     // with no parentheses available:
@@ -102,7 +81,6 @@ function backspace() {
 
 function clear() {
     numbers = [''];
-    workingNumber = '';
 }
 
 function clickNum(newChar) {
@@ -114,19 +92,11 @@ function clickNum(newChar) {
         numbers.push('');   
     }
     numbers[numbers.length-1] += newChar;
-    // if (workingNumber.includes(newChar) && newChar == '.') return;
-    // else {
-    //     workingNumber += newChar;
-    // }
 }
 
 function clickOp(newChar) {
     const ops = '/*-+';
 
-    // if (!ops.includes(workingNumber)) {
-    //     numbers.push(workingNumber);
-    // }
-    // workingNumber = newChar;
     if (!ops.includes(numbers[numbers.length-1])) {
         numbers.push('');
     }
@@ -164,4 +134,4 @@ function placeButtons() {
 }
 
 placeButtons();
-// --> END STYLING CODE <-- //
+// --> END DOC SETUP CODE <-- //
