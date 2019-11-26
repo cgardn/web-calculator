@@ -20,7 +20,7 @@ const Display = {
 //    lastResult
 //      all operations actually happen on the data, display functions only read
 
-let numbers = [];
+let numbers = [''];
 let operators = [];
 let workingNumber = '';
 let lastResult = 0;
@@ -29,7 +29,7 @@ const display = document.querySelector('#calc-display');
 
 const Actions = {
     add,subtract,multiply,divide,operate,
-    clear,
+    backspace, clear,
 }
 
 function add(a,b) {
@@ -50,6 +50,7 @@ function divide(a,b) {
 
 function operate(a,b,opr) {
     // FIXME
+    throw Error("operate not implemented");
     switch (opr) {
         case 'add': return add(a,b);
         case 'subtract': return subtract(a,b);
@@ -59,29 +60,42 @@ function operate(a,b,opr) {
 }
 
 function updateDisplay() {
-    display.textContent = " " + ` ${numbers.join(' ')} ${workingNumber}` + ' ';
+    display.textContent = numbers.join(' ');
+    // display.textContent = " " + ` ${numbers.join(' ')} ${workingNumber}` + ' ';
+}
+
+function backspace() {
+    throw Error("backspace not implemented");
 }
 
 function clear() {
-    numbers = [];
-    operators = [];
+    numbers = [' '];
+    //operators = [''];
     workingNumber = '';
 }
 
 function clickNum(newChar) {
-    if (workingNumber.includes(newChar) && newChar == '.') return;
+    if (numbers[numbers.length-1].includes(newChar) && newChar == '.') return;
     else {
-        workingNumber += newChar;
+        numbers[numbers.length-1] += newChar;
     }
+    // if (workingNumber.includes(newChar) && newChar == '.') return;
+    // else {
+    //     workingNumber += newChar;
+    // }
 }
 
 function clickOp(newChar) {
     const ops = '/*-+';
 
-    if (!ops.includes(workingNumber)) {
-        numbers.push(workingNumber);
+    // if (!ops.includes(workingNumber)) {
+    //     numbers.push(workingNumber);
+    // }
+    // workingNumber = newChar;
+    if (!ops.includes(numbers[numbers.length-1])) {
+        numbers.push('');
     }
-    workingNumber = newChar;
+    numbers[numbers.length-1] = newChar;
 }
 
 function doAction(action) {
