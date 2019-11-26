@@ -1,0 +1,58 @@
+* {
+    margin: auto;
+    border: none;
+}
+
+body {
+    margin: 5% 30%;
+}
+
+#title {
+    grid-area: title;
+    font-family: Helvetica, sans-serif;
+    font-size: 2em;
+    background-color: lightgray;
+    border-radius: 2px;
+    width: 45%;
+    text-align: center;
+}
+
+#calc-outer {
+    display: grid;
+    grid-template-areas:
+        "title" 
+        "display"
+        "buttons";
+    justify-items: center;
+}
+
+#calc-display {
+    grid-area: display;
+    width: 300px;
+    height: 30px;
+    background-color: rgb(230,230,230);
+    border: 1px solid black;
+    border-radius: 2px;
+    margin: 20px;
+}
+
+#calc-buttons {
+    grid-area: buttons;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas: 
+        "t7 t8 t9 divide multiply"
+        "t4 t5 t6 subtract add"
+        "t1 t2 t3 backspace clear"
+        "t0 t0 decimal equals equals";
+    background-color: rgb(126, 126, 126);
+    margin-top: 5%;
+    width: min-content;
+}
+
+.button-num {
+    margin: 30px;
+    font-size: 1.5em;
+    padding: 30px;
+}
