@@ -44,7 +44,7 @@ function operate() {
 
     // if working number is an operator, don't compute anything 
     // FIXME include in error UI
-    if (!nums.includes(numbers[numbers.length-1])) return;
+    if (!nums.includes(numbers[numbers.length-1][0])) return;
 
     let ind = numbers.findIndex( (element) => (element == '/' || element == '*'));
     if (ind>0) {
@@ -61,12 +61,12 @@ function operate() {
     //   then something went wrong (the operators arent doing anything)
     if (numbers.length > 1) {operate();}
 
-    // with no parentheses available:
+    // operation logic: (no parentheses, might work with them later)
     //  - left to right, find / or * (same precedence)
     //  - if find one, pass index of operator to divide or multiply func
     //  - func takes preceding and following nums, does thing, shrinks array (removes those nums and the operator) and replaces result into new slot, so 3 slots becomes one, with operators on either side
     //  - return now-smaller array and continue searching for operators according to left-to-right and precedence rules
-    // when only 1 number left, you're done, calling function updates display
+    // when only 1 number left, operate exits, calling function updates display
 
 }
 
@@ -76,7 +76,9 @@ function updateDisplay(optionalText = '') {
 }
 
 function backspace() {
-    throw Error("FIXME backspace not implemented");
+    numbers[numbers.length-1] = numbers[numbers.length-1].slice(0,-1);
+    if (numbers[numbers.length-1] == '') numbers.pop();
+    if (numbers.length == 0) numbers = [''];
 }
 
 function clear() {
@@ -88,8 +90,8 @@ function clickNum(newChar) {
     
     if (numbers[numbers.length-1].includes(newChar) && newChar == '.') return;
 
-    if (!nums.includes(numbers[numbers.length-1])) {
-        numbers.push('');   
+    if (!nums.includes(numbers[numbers.length-1][0])) {
+        if (numbers[0] != '') numbers.push('');   
     }
     numbers[numbers.length-1] += newChar;
 }
