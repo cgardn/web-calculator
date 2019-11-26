@@ -1,3 +1,5 @@
+"use strict";
+
 const Display = {
     
     updateDisplay,
@@ -32,53 +34,86 @@ const Actions = {
     backspace, clear,
 }
 
-function add(a,b) {
-    return a+b;
+function add(ind) {
+    let thisOp = numbers.slice(ind-1,ind+2);
+    numbers.splice( ind-1, 3, thisOp[0] + thisOp[1] );
 }
 
-function subtract(a,b) {
-    return a-b;
+function subtract(ind) {
+    let thisOp = numbers.slice(ind-1, ind+2);
+    numbers.splice( ind-1, 3, thisOp[0] - thisOp[1]);
 }
 
-function multiply(a,b) {
-    return a*b;
+function multiply(ind) {
+    let thisOp = numbers.slice(ind-1, ind+2);
+    numbers.splice( ind-1, 3, thisOp[0] * thisOp[1]);
 }
 
-function divide(a,b) {
-    return a/b;
-}
-
-function operate(a,b,opr) {
-    // FIXME
-    throw Error("operate not implemented");
-    switch (opr) {
-        case 'add': return add(a,b);
-        case 'subtract': return subtract(a,b);
-        case 'multiply': return multiply(a,b);
-        case 'divide': return divide(a,b);
+function divide(ind) {
+    let thisOp = numbers.slice(ind-1, ind-2);
+    if (thisOp[1] == 0) {
+        updateDisplay("No dividing by 0!");
+        return;
     }
+    numbers.splice( ind-1, 3, thisOp[0] / thisOp[1]);
 }
 
-function updateDisplay() {
+function operate() {
+    // manages the whole expression loop and operator precedence
+    // can probably do this recursively instead of a while loop
+    //throw Error("FIXME - operate not implemented");
+
+    const nums = '0123456789.';
+
+    // if working number is an operator, don't compute anything 
+    // FIXME include in error UI
+    if (!nums.includes(numbers[numbers.length-1])) return;
+
+    let ind = numbers.findIndex( (element) => (element == '/' || element == '*'));
+    if (ind>0) {
+        if (numbers[ind] == '/') divide(ind);
+        else if (numbers[ind] == '*') multiply(ind);
+    } else if (ind == -1) {
+        ind = numbers.findIndex((element) => (element == '+' || element == '-'));
+        if (ind > 0) {
+            if (numbers[ind] == '+') add(ind);
+            else if (numbers[ind] == '-') multiply(ind);
+        }
+    }
+    if (numbers.length > 1) {operate();}
+
+    // with no parentheses available:
+    //  - left to right, find / or * (same precedence)
+    //  - if find one, pass index of operator to divide or multiply func
+    //  - func takes preceding and following nums, does thing, shrinks array (removes those nums and the operator) and replaces result into new slot, so 3 slots becomes one, with operators on either side
+    //  - return now-smaller array and continue searching for operators according to left-to-right and precedence rules
+    // when only 1 number left, you're done, calling function updates display
+
+}
+
+function updateDisplay(optionalText = '') {
+    if (optionalText) display.textContent = optionalText;
     display.textContent = numbers.join(' ');
-    // display.textContent = " " + ` ${numbers.join(' ')} ${workingNumber}` + ' ';
 }
 
 function backspace() {
-    throw Error("backspace not implemented");
+    throw Error("FIXME backspace not implemented");
 }
 
 function clear() {
-    numbers = [' '];
-    //operators = [''];
+    numbers = [''];
     workingNumber = '';
 }
 
 function clickNum(newChar) {
+    const nums = '0123456789.';
+    
     if (numbers[numbers.length-1].includes(newChar) && newChar == '.') return;
-    else {
-        numbers[numbers.length-1] += newChar;
+
+    if (!nums.includes(numbers[numbers.length-1])) {
+        numbers.push('');   
     }
+    numbers[numbers.length-1] += newChar;
     // if (workingNumber.includes(newChar) && newChar == '.') return;
     // else {
     //     workingNumber += newChar;
