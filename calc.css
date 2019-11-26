@@ -51,7 +51,7 @@ body {
         "t7 t8 t9 backspace clear"
         "t4 t5 t6 multiply divide"
         "t1 t2 t3 add subtract"
-        "t0 t0 decimal equals equals";
+        "t0 t0 decimal operate operate";
     background-color: rgb(126, 126, 126);
     width: 100%;
     /* margin-top: 5%; */
