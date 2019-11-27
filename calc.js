@@ -109,31 +109,58 @@ function doAction(action) {
     Actions[action]();
 }
 
-function handleButton(char, e) {
+function handleButton(e) {
+    // FIXME - refactor to take a single action input, maybe I can cut out
+    //          a whole function in here somewhere, and take key names directly
+    //          from the input event - then I'm making the buttons match key 
+    //          input names, not the other way around
 
-    let newChar = e.target.textContent;
-    let action = e.target.getAttribute('data-key');
+    let newChar = '';
+    let action = '';
+
+    const funcs = {
+        Backspace: 'backspace',
+        Delete: 'clear',
+        Enter: 'operate',
+    }
+
+    if (e.type == 'click') {
+        //newChar = e.target.textContent;
+        action = e.target.getAttribute('data-key');
+    } else if (e.type == 'keydown') {
+        //newChar = e.key;
+        action = e.key;
+    }
+
+    //console.log(`${newChar}  |  ${action}`);
 
     const nums = '0123456789.'
     const ops = '/*+-';
-    const funcs = '<C=';
+//    const funcs = '<C=';
 
-    if (nums.includes(newChar)) clickNum(newChar);
-    else if (ops.includes(newChar)) clickOp(newChar);
-    else if (funcs.includes(newChar)) doAction(action);
+    // if (nums.includes(newChar)) clickNum(newChar);
+    // else if (ops.includes(newChar)) clickOp(newChar);
+//    else if (funcs.includes(newChar)) doAction(action);
+
+    if (nums.includes(action)) clickNum(action);
+    else if (ops.includes(action)) clickOp(action);
+    else if (action in funcs) doAction(funcs[action]);
+
 
     updateDisplay();
 }
 
 // --> DOC SETUP CODE FOLLOWS <-- //
-function placeButtons() {
+function docSetup() {
     let btns = Array.from(document.querySelectorAll('.button-num'));
     
     btns.map( btn => {
-        btn.style.gridArea = btn.getAttribute('data-key');
-        btn.addEventListener('click', (e) => handleButton(btn.textContent, e));
+        btn.style.gridArea = btn.getAttribute('data-name');
+        btn.addEventListener('click', handleButton);
     });
+
+    window.addEventListener('keydown', handleButton);
 }
 
-placeButtons();
+docSetup();
 // --> END DOC SETUP CODE <-- //
