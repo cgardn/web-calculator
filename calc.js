@@ -15,26 +15,26 @@ const Actions = {
 
 function add(ind) {
     let thisOp = numbers.slice(ind-1,ind+2);
-    numbers.splice( ind-1, 3, Number(thisOp[0]) + Number(thisOp[2]) );
+    let result = Number(thisOp[0]) + Number(thisOp[2]);
+    numbers.splice( ind-1, 3, `${result}`);
 }
 
 function subtract(ind) {
     let thisOp = numbers.slice(ind-1, ind+2);
-    numbers.splice( ind-1, 3, Number(thisOp[0]) - Number(thisOp[2]));
+    let result = Number(thisOp[0]) - Number(thisOp[2]);
+    numbers.splice( ind-1, 3, `${result}`);
 }
 
 function multiply(ind) {
     let thisOp = numbers.slice(ind-1, ind+2);
-    numbers.splice( ind-1, 3, Number(thisOp[0]) * Number(thisOp[2]));
+    let result = Number(thisOp[0]) * Number(thisOp[2]);
+    numbers.splice( ind-1, 3, `${result}`);
 }
 
 function divide(ind) {
     let thisOp = numbers.slice(ind-1, ind+2);
-    if (thisOp[1] == 0) {
-        updateDisplay("No dividing by 0!");
-        return;
-    }
-    numbers.splice( ind-1, 3, Number(thisOp[0]) / Number(thisOp[2]));
+    let result = Number(thisOp[0]) / Number(thisOp[2]);
+    numbers.splice( ind-1, 3, `${result}`);
 }
 
 function operate() {
@@ -58,16 +58,8 @@ function operate() {
         }
     }
     // could track length of numbers here, if it doesnt change on next iteration
-    //   then something went wrong (the operators arent doing anything)
+    //   then something went wrong (the operators functions arent doing anything)
     if (numbers.length > 1) {operate();}
-
-    // operation logic: (no parentheses, might work with them later)
-    //  - left to right, find / or * (same precedence)
-    //  - if find one, pass index of operator to divide or multiply func
-    //  - func takes preceding and following nums, does thing, shrinks array (removes those nums and the operator) and replaces result into new slot, so 3 slots becomes one, with operators on either side
-    //  - return now-smaller array and continue searching for operators according to left-to-right and precedence rules
-    // when only 1 number left, operate exits, calling function updates display
-
 }
 
 function updateDisplay(optionalText = '') {
@@ -98,7 +90,7 @@ function clickNum(newChar) {
 
 function clickOp(newChar) {
     const ops = '/*-+';
-
+    if (numbers.length == 1 && numbers[numbers.length-1] == '') return;
     if (!ops.includes(numbers[numbers.length-1])) {
         numbers.push('');
     }
@@ -110,14 +102,10 @@ function doAction(action) {
 }
 
 function handleButton(e) {
-    // FIXME - refactor to take a single action input, maybe I can cut out
-    //          a whole function in here somewhere, and take key names directly
-    //          from the input event - then I'm making the buttons match key 
-    //          input names, not the other way around
-
-    let newChar = '';
     let action = '';
 
+    const nums = '0123456789.'
+    const ops = '/*+-';
     const funcs = {
         Backspace: 'backspace',
         Delete: 'clear',
@@ -125,27 +113,14 @@ function handleButton(e) {
     }
 
     if (e.type == 'click') {
-        //newChar = e.target.textContent;
         action = e.target.getAttribute('data-key');
     } else if (e.type == 'keydown') {
-        //newChar = e.key;
         action = e.key;
     }
-
-    //console.log(`${newChar}  |  ${action}`);
-
-    const nums = '0123456789.'
-    const ops = '/*+-';
-//    const funcs = '<C=';
-
-    // if (nums.includes(newChar)) clickNum(newChar);
-    // else if (ops.includes(newChar)) clickOp(newChar);
-//    else if (funcs.includes(newChar)) doAction(action);
 
     if (nums.includes(action)) clickNum(action);
     else if (ops.includes(action)) clickOp(action);
     else if (action in funcs) doAction(funcs[action]);
-
 
     updateDisplay();
 }
